@@ -36,6 +36,5 @@ pipeline {
 		  kubectl apply -f service.yaml -n default
         }
       }
-    }
   }
 }
