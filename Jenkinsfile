@@ -1,25 +1,30 @@
-node {
-
-    stage("Git Clone"){
-	
-		git branch: 'main', credentialsId: 'github-credentials', url: ' https://github.com/praboworamasatrio/jenkins-kubernetes-deployment.git '
+pipeline {
+  environment {
+    dockerimagename = "ramasatrioboy/react-app"
+    dockerImage = ""
+  }
+  agent any
+  stages {
+    stage('Checkout Source') {
+      steps {
+        git branch: 'main', credentialsId: 'github-credentials', url: ' https://github.com/praboworamasatrio/jenkins-kubernetes-deployment.git '
+      }
     }
-
-    stage("Docker build"){
-        sh 'docker build -t ramasatrioboy/react-app .'
-        sh 'docker image list'
-        sh 'docker tag ramasatrioboy/react-app ramasatrioboy/jenkins-kubernetes-deployment'
+    stage('Build image') {
+      steps{
+        script {
+          dockerImage = docker.build dockerimagename
+        }
+      }
     }
-
-	stage('Pushing Image') {
+    stage('Pushing Image') {
       environment {
                registryCredential = 'dockerhub-credentials'
            }
       steps{
         script {
           docker.withRegistry( ' https://registry.hub.docker.com ', registryCredential ) {
-          sh 'docker push ramasatrioboy/jenkins-kubernetes-deployment'
-
+            dockerImage.push("latest")
           }
         }
       }
@@ -41,6 +46,6 @@ node {
           sshCommand remote: remote, command: "kubectl apply -f deployment.yaml"
         }
     }
-
+  }
 }
  
