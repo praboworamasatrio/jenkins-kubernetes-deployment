@@ -1,8 +1,4 @@
 pipeline {
-  environment {
-    dockerimagename = "ramasatrioboy/react-app"
-    dockerImage = ""
-  }
   agent any
   stages {
     stage('Checkout Source') {
@@ -13,7 +9,7 @@ pipeline {
     stage('Build image') {
       steps{
         script {
-          dockerImage = docker.build dockerimagename
+          docker build -t ramasatrioboy/react-app .
         }
       }
     }
