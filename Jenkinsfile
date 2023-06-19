@@ -8,9 +8,7 @@ pipeline {
     }
     stage('Build image') {
       steps{
-        script {
           docker build -t ramasatrioboy/react-app .
-        }
       }
     }
     stage('Pushing Image') {
